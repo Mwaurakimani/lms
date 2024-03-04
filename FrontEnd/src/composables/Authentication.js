@@ -13,7 +13,6 @@ async function authenticationConfirmed(token,host) {
     } catch (error) {
         console.error('Invalid token:', error.response.data);
         localStorage.clear();
-        clear()
     }
 }
 

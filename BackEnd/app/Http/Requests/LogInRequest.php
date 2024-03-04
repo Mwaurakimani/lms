@@ -24,11 +24,10 @@ class LogInRequest extends FormRequest
     {
         // Define your validation rules here if x-browser-mode header is not present or set to true
         return [
-            'username' => [
+            'email' => [
                 'required',
                 Rule::exists('users')->where(function ($query) {
-                    $query->where('username', request()->input('username'))
-                        ->orWhere('email', request()->input('username'));
+                    $query->where('email', request()->input('email'));
                 }),
             ],
             'password' => 'required|min:8',
@@ -38,7 +37,7 @@ class LogInRequest extends FormRequest
     public function attributes()
     {
         return [
-            'username' => 'Username',
+            'email' => 'email',
             'password' => 'Password',
         ];
     }

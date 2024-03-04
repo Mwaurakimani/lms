@@ -34,14 +34,13 @@ class UserController extends Controller
     }
 
     function login(LogInRequest $request){
-        $username = $request->input('username');
+        $username = $request->input('email');
         $password = $request->input('password');
 
-        $user = User::where('username', $username)
-            ->orWhere('email', $username)
+        $user = User::where('email', $username)
             ->first();
 
-        if (!$user || !Auth::attempt(['username' => $user->username, 'password' => $password])) {
+        if (!$user || !Auth::attempt(['email' => $user->email, 'password' => $password])) {
             // Authentication failed
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
