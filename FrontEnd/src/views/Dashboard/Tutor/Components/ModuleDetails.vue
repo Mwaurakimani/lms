@@ -9,8 +9,8 @@ const item = ref(null);
 
 
 onBeforeMount(() => {
-  item.value = route.params.id
-      ? props.course.modules[route.params.id]
+  item.value = route?.params?.module
+      ? props.course.modules[route.params.module]
       : {
         title: '',
         description: '',
@@ -19,15 +19,28 @@ onBeforeMount(() => {
       }
 })
 
-function saveItem(){
-  if(route.params.id){
-    props.course.modules[route.params.id] = item.value
-  }else {
-    props.course.modules.push(item.value)
+function saveItem() {
+  //check if its in create or edit mode
+  if (route?.params?.id) {
+    //edit mode
+    if (route.params.module) {
+      props.course.modules[route.params.module] = item.value
+    } else {
+      props.course.modules.push(item.value)
+    }
+
+    router.push({name: 'EditModuleList'})
+  } else {
+    //create mode
+    if (route.params.module) {
+      props.course.modules[route.params.module] = item.value
+    } else {
+      props.course.modules.push(item.value)
+    }
+    router.push({name: 'ModuleList'})
   }
 
 
-  router.push({name:'ModuleList'})
 }
 
 
@@ -38,7 +51,8 @@ function saveItem(){
     <form>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Title</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="item.title">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+               v-model="item.title">
         <!--        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>-->
       </div>
       <div class="mb-3">
@@ -51,7 +65,8 @@ function saveItem(){
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Time</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="item.time">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+               v-model="item.time">
         <!--        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>-->
       </div>
       <div>

@@ -1,48 +1,35 @@
 <script setup>
 
 import TutorDashboard from "@/components/TutorDashboard.vue";
-import {ref} from "vue";
-import {useServer} from "@/composables/server.js";
-import router from "@/router/index.js";
+import {provide, toRef} from "vue";
+import {useCourseStore} from "@/stores/courseStore.js";
 
-const course = ref({
-  title: 'Course 1',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur at dolor, dolores eligendi eos est excepturi expedita, fuga fugit ipsa molestias nesciunt nulla perspiciatis quam rem, suscipit tempore veritatis vitae',
-  image: 'pathx',
-  banner: 'pathx',
-  modules: [
-    {
-      title: "Mod:one",
-      description: "Mod:one description",
-      file: "link to file",
-      time: "6hrs",
-    },
-    {
-      title: "Mod:two",
-      description: "Mod:two description",
-      file: "link to file",
-      time: "6hrs",
-    }
-  ],
+const coursesStore = useCourseStore()
+const course = toRef(coursesStore.courses,'active')
+coursesStore.loadActiveCourse({
+  title: null,
+  description: null,
+  image: null,
+  banner: null,
+  modules: [],
   status: 'Active',
 })
-const server = useServer()
 
-function saveCourse(){
-  let formData = new FormData()
 
-  formData.append('course',JSON.stringify(course.value))
+document.addEventListener('keydown', function (event) {
+  if (event.ctrlKey && event.key === 'Enter')
+    saveCourse()
+})
 
-  server.post('/api/createCourse',formData)
-      .then((res) => {
-        console.log(res.data)
-        router.push({name:'TutorCourses'})
-      })
-      .catch((err) => {
-        console.log(err.data)
-      })
+function saveCourse() {
+  coursesStore.saveActiveCurse()
 }
 
+let imageUpload = (file, variable, fieldName) => {
+  course.value[fieldName] = file
+}
+
+provide('imageUpload', imageUpload)
 </script>
 
 <template>
@@ -59,7 +46,7 @@ function saveCourse(){
         <router-link :to="{name:'CourseSettings'}">Course Settings</router-link>
       </ul>
       <section>
-        <router-view :course='course'></router-view>
+        <router-view :course></router-view>
       </section>
     </div>
   </TutorDashboard>

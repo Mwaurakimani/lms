@@ -1,8 +1,7 @@
 <script setup>
-import {inject, onMounted} from "vue";
+import {onMounted} from "vue";
 
 const props = defineProps(['course'])
-const imageUpload = inject('imageUpload')
 
 function displayImage(file,field,callBack){
   imageUpload(callBack[0],callBack[1],callBack[2])
@@ -22,23 +21,60 @@ function setImage(event,element_id,field) {
     displayImage(file,element_id,[file,props.course,field])
 }
 
-onMounted(() => {
-  if (props.course.image) {
+function loadImages(type,field,element){
+
+  if (typeof type === "string"){
+
+    let url = "http://localhost:8001/storage"+props.course[field]
+    const preview = document.getElementById(element);
+    preview.setAttribute('src', url);
+
+  }else {
     const fileReader = new FileReader();
-    const preview = document.getElementById('image-preview');
+    const preview = document.getElementById(element);
     fileReader.onload = event => {
       preview.setAttribute('src', event.currentTarget.result);
     }
-    fileReader.readAsDataURL(props.course.image);
+    fileReader.readAsDataURL(props.course[field]);
+  }
+}
+
+onMounted(() => {
+  console.clear()
+  loadImages(
+      typeof props.course.image,
+      'image',
+      'image-preview'
+  )
+
+  if (props.course.image) {
+    if(typeof props.course.image == 'string'){
+      let url = "http://localhost:8001/storage"+props.course.image
+      const preview = document.getElementById('image-preview');
+      preview.setAttribute('src', url);
+    }else {
+      const fileReader = new FileReader();
+      const preview = document.getElementById('image-preview');
+      fileReader.onload = event => {
+        preview.setAttribute('src', event.currentTarget.result);
+      }
+      fileReader.readAsDataURL(props.course.image);
+    }
   }
 
   if (props.course.banner) {
-    const fileReader = new FileReader();
-    const preview = document.getElementById('banner-preview');
-    fileReader.onload = event => {
-      preview.setAttribute('src', event.currentTarget.result);
+    if(typeof props.course.banner == 'string'){
+      let url = "http://localhost:8001/storage"+props.course.banner
+      const preview = document.getElementById('banner-preview');
+      preview.setAttribute('src', url);
+    }else {
+      const fileReader = new FileReader();
+      const preview = document.getElementById('banner-preview');
+      fileReader.onload = event => {
+        preview.setAttribute('src', event.currentTarget.result);
+      }
+      fileReader.readAsDataURL(props.course.banner);
     }
-    fileReader.readAsDataURL(props.course.banner);
   }
 })
 </script>
@@ -48,11 +84,12 @@ onMounted(() => {
     <form>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Title</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" v-model="props.course.title">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="course.title">
+<!--        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>-->
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Description</label>
-        <textarea class="form-control" id="exampleInputPassword1" v-model="props.course.description"></textarea>
+        <textarea class="form-control" id="exampleInputPassword1" v-model="course.description"></textarea>
       </div>
       <div class="flex mb-3 flex-col">
         <label class="form-label block w-full">Image</label>
@@ -71,7 +108,7 @@ onMounted(() => {
 <style scoped>
 @import "src/assets/scss/index.scss";
 
-.app-card {
+.app-card{
   border: 1px solid rgba(204, 204, 204, 0.8);
   overflow: hidden;
   @apply bg-white rounded

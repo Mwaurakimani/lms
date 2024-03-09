@@ -1,13 +1,7 @@
 import Courses from "@/views/Dashboard/Tutor/Courses.vue";
-import CreateCourses from "@/views/Dashboard/Tutor/CreateCourses.vue";
-import CourseDetails from "@/views/Dashboard/Tutor/Components/CourseDetails.vue";
-import ModuleDetails from "@/views/Dashboard/Tutor/Components/ModuleDetails.vue";
-import CourseSettings from "@/views/Dashboard/Tutor/Components/CourseSettings.vue";
-import ModuleList from "@/views/Dashboard/Tutor/Components/ModuleList.vue";
-import EditCourse from "@/views/Dashboard/Tutor/EditCourse.vue";
 import Dashboard from "@/views/Dashboard/Student/Dashboard.vue";
 import CourseDashboard from "@/views/Dashboard/Student/CourseDashboard.vue";
-const authentication = false
+const authentication = true
 
 const StudentsRoutes = [
   {

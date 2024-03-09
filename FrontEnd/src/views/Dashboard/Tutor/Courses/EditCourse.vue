@@ -1,10 +1,18 @@
 <script setup>
-
 import TutorDashboard from "@/components/TutorDashboard.vue";
+import {useServer} from "@/composables/server.js";
+import {useRoute} from "vue-router";
 import {ref} from "vue";
 
-const course = ref({
-  name:'name'
+const server = useServer()
+const route = useRoute()
+const course = ref(null)
+
+server.get('api/course/'+route.params.id)
+    .then(async (resp) => {
+      course.value = resp.data
+    }).catch((err) => {
+  console.log(err)
 })
 
 </script>
@@ -12,7 +20,7 @@ const course = ref({
 <template>
   <TutorDashboard :page-title="'Courses'">
     <div class="flex justify-between items-center">
-      <h1 class="p-[20px] text-[25px] font-semibold text-gray-700">Create Courses</h1>
+      <h1 class="p-[20px] text-[25px] font-semibold text-gray-700">Edit Courses</h1>
     </div>
     <div class="max-w-[900px] mx-auto h-[300px]">
       <ul class="flex p-0 border-b mb-[20px]">
@@ -21,7 +29,7 @@ const course = ref({
         <router-link :to="{name:'EditCourseSettings'}">Course Settings</router-link>
       </ul>
       <section>
-        <router-view :course='course'> </router-view>
+        <router-view v-if="course" :course='course'> </router-view>
       </section>
     </div>
   </TutorDashboard>

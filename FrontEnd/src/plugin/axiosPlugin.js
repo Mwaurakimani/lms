@@ -2,17 +2,13 @@
 import axios from 'axios';
 import {useSetupStore} from "@/stores/setupStore.js";
 
-function getToken(){
-    return localStorage.getItem('token')
-}
-
 export const axiosPlugin = {
-    install(app) {
-        // Create an axios instance
+    install: function (app) {
+
         const setup = useSetupStore()
 
         const httpClient = axios.create({
-            baseURL: setup.host, // Set your base URL
+            baseURL: setup.host,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -21,11 +17,9 @@ export const axiosPlugin = {
 
         // Set authorization header if needed
         httpClient.interceptors.request.use(config => {
-            const token = getToken();
 
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+            if (localStorage.getItem('token'))
+                config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
 
             return config;
         });

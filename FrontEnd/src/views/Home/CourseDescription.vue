@@ -33,7 +33,12 @@ function enroll() {
 <template>
   <navigation class=" mb-[20px]"></navigation>
 
-  <div class="container h-[250px] rounded-md bg-red-400 mb-[20px]">
+  <div class="container h-[250px] rounded-md bg-red-400 mb-[20px] p-0 overflow-hidden">
+    <img
+        :src="course.image?'http://localhost:8001/storage'+course.image:'#'"
+        class="w-full h-full max"
+        style="object-position: center;object-fit: cover"
+    >
   </div>
 
   <div class="flex container px-[0px] gap-2 mb-[10px] flex-wrap">
@@ -44,9 +49,9 @@ function enroll() {
       </div>
       <h1 class="mb-[10px] py-[10px] font-semibold text-gray-700">Course Oultline</h1>
       <ul class="text-sm">
-        <li class="flex justify-between mb-[10px]" v-for="item in 10">
-          <h3>Module 1: Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h3>
-          <p class="w-[100px]">1 Hr</p>
+        <li class="flex justify-between mb-[10px]" v-for="item in course.modules">
+          <h3>{{item.title}}</h3>
+          <p class="w-[100px]">{{item.time}}</p>
         </li>
       </ul>
     </div>

@@ -1,15 +1,13 @@
 <script setup>
-import {provide, ref} from "vue";
-import {useAccountModifier} from "@/stores/useAccountModifier.js";
+import SideBarHeading from "@/components/SideBarHeading.vue";
 
 const props = defineProps(['pageTitle'])
-const accountModifier = useAccountModifier()
 </script>
 
 <template>
   <div class="dashboard-app-holder flex gap-1">
     <div class="side-panel">
-      <h1 class="text-white mb-[10px] py-[10px] px-[30px] font-light text-[25px]">{{props.pageTitle}}</h1>
+      <side-bar-heading :page-title="props.pageTitle"/>
       <ul class="text-white side-buttons-list">
         <router-link :to="{name:'home'}">Home</router-link>
         <router-link :to="{name:'StudentCourses'}">My Courses</router-link>

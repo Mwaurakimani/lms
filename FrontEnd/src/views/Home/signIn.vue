@@ -1,38 +1,34 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import {useServer} from "@/composables/server.js";
-import {formatErrors,errorsValues} from "@/composables/serverFromatter.js";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
+import {useAuthenticationStore} from "@/stores/authenticationStore.js";
 
 const router = useRouter()
 const server = useServer()
+const auth = useAuthenticationStore()
 
+
+const errorsValues = ref({})
 const content = reactive({
   email:'',
   password:''
 })
 
-function login() {
+async function login() {
+  try{
+    const response =  await server.post('/api/login', {... content })
+    const { token, user } = response.data;
 
-  for (const key in errorsValues) {
-    delete errorsValues[key];
+    auth.$patch({token:token, user:user})
+
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    await router.push({name: 'home'})
+  }catch (errors){
+    errorsValues.value = errors?.response?.data?.errors
   }
-
-  server
-      .post('/api/login', {... content })
-      .then((response) => {
-        // Extract token and user data from the response
-        const { token, user } = response.data;
-
-        // Save the token and user data to local storage or Vuex store
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-
-        router.push({name:'home'})
-      })
-      .catch((err) => {
-        formatErrors(err)
-      })
 }
 function register() {
   router.push({ name: 'register' })

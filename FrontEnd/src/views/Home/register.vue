@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router'
 import { useServer } from '@/composables/server.js'
 import { reactive } from 'vue'
 import {useSetupStore} from "@/stores/setupStore.js";
-import {formatErrors,errorsValues} from "@/composables/serverFromatter.js";
 
 const router = useRouter()
 const setup = useSetupStore()
@@ -19,10 +18,6 @@ const content = reactive({
 
 function register() {
 
-  for (const key in errorsValues) {
-    delete errorsValues[key];
-  }
-
   setup.$patch({
     port:'100'
   })
@@ -34,7 +29,6 @@ function register() {
       router.push({name:'home'})
     })
     .catch((err) => {
-      formatErrors(err)
     })
 }
 </script>

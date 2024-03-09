@@ -1,14 +1,14 @@
 <script setup>
-const props = defineProps(['pageTitle'])
+import SideBarHeading from "@/components/SideBarHeading.vue";
 
+const props = defineProps(['pageTitle'])
 </script>
 
 <template>
   <div class="dashboard-app-holder flex gap-1">
     <div class="side-panel">
-      <h1 class="text-white mb-[10px] py-[10px] px-[30px] font-light text-[25px]">{{props.pageTitle}}</h1>
+      <side-bar-heading :page-title="props.pageTitle"/>
       <ul class="text-white side-buttons-list">
-        <router-link :to="{name:'home'}">Home</router-link>
         <router-link :to="{name:'TutorDashboard'}">Dashboard</router-link>
         <router-link :to="{name:'TutorCourses'}">My Courses</router-link>
         <router-link :to="{name:'TutorCourses'}">Account</router-link>
@@ -21,7 +21,7 @@ const props = defineProps(['pageTitle'])
 </template>
 
 <style lang="scss">
-body,html{
+body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -30,18 +30,18 @@ body,html{
 </style>
 
 <style scoped lang="scss">
-.dashboard-app-holder{
+.dashboard-app-holder {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 
-  .side-panel{
+  .side-panel {
     width: 250px;
     height: 100%;
     @apply bg-blue-950;
 
-    .side-buttons-list{
-      a{
+    .side-buttons-list {
+      a {
         display: block;
         transition: all ease-in 100ms;
         @apply bg-blue-900 mx-[10px] rounded p-[8px] mb-[10px]
@@ -49,7 +49,8 @@ body,html{
       }
     }
   }
-  .main-content{
+
+  .main-content {
     width: calc(100% - 250px - 0px);
     overflow: auto;
   }

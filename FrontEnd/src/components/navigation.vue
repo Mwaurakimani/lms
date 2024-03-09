@@ -1,75 +1,59 @@
 <script setup>
-
-import {is_Authenticated} from "@/composables/Authentication.js";
 import {useServer} from "@/composables/server.js";
+import {useAuthenticationStore} from "@/stores/authenticationStore.js";
 import {useRouter} from "vue-router";
 
-const accountType = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).accountType : null
-
+const auth = useAuthenticationStore()
+const router = useRouter()
 const server = useServer()
-const router = useRouter();
 
-
-function logout() {
-  server.post('/api/logout')
-      .then(() => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-        window.location.href = window.location.href
-      })
+async function logout() {
+  try {
+    await auth.logOut(server)
+    await router.go()
+  } catch (err) {
+    console.log(err)
+  }
 }
-
 </script>
 <template>
-  <div class="container nav-bar shadow rounded-md flex items-center justify-between mt-[10px]">
-    <div class="logo w-[100px]">
-      <div class="font-bold flex items-center justify-center h-[100%] text-[30px] text-blue-500">LMS</div>
+  <div class="container nav-bar">
+    <div class="logo">
+      <div class="flex items-center justify-center h-[100%] text-[30px] font-bold text-blue-500">LMS</div>
     </div>
 
-    <ul v-if="accountType == null">
-      <li>
-        <router-link class="navigation-link" :to="{name:'register'}">Register</router-link>
-      </li>
-      <li>
-        <router-link class="navigation-link" :to="{name:'login'}">Sign In</router-link>
-      </li>
-    </ul>
-    <ul v-else>
-      <li v-if="accountType === 'tutor'">
-        <router-link class="navigation-link" :to="{name:'TutorDashboard'}">Dashboard</router-link>
-      </li>
-      <li v-else-if="accountType === 'student'">
-        <router-link class="navigation-link" :to="{name:'TutorDashboard'}">Dashboard</router-link>
-      </li>
-      <li v-else>
-        <router-link class="navigation-link" :to="{name:'StudentCourses'}">Dashboard</router-link>
-      </li>
-      <li>
-        <button class="logout" @click.prevent="logout">Log Out</button>
-      </li>
-    </ul>
+    <div v-if="auth.accountType == null">
+      <router-link :to="{name:'register'}" class="navigation-link">Register</router-link>
+      <router-link class="navigation-link" :to="{name:'login'}">Sign In</router-link>
+    </div>
+    <div v-else>
+      <router-link v-if="auth.accountType === 'tutor'" class="navigation-link" :to="{name:'TutorDashboard'}">
+        Dashboard
+      </router-link>
+      <router-link v-else-if="auth.accountType === 'student'" class="navigation-link" :to="{name:'StudentDashboard'}">
+        Dashboard
+      </router-link>
+      <router-link v-else class="navigation-link" :to="{name:'StudentCourses'}">Dashboard</router-link>
+      <button class="logout" @click.prevent="logout">Log Out</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-@import 'src/assets/scss/index.scss';
-
 .nav-bar {
-  background-color: white;
-  @apply py-[5px];
+  @apply flex items-center justify-between py-[5px] mt-[10px] bg-white shadow rounded-md;
 
   .logo {
-    width: 100px;
-    height: 50px;
-    @apply rounded
+    @apply rounded w-[100px] h-[50px]
   }
 
-  ul {
+  div {
     @apply flex;
 
-    li {
+    a, button {
       transition: all ease-in 100ms;
-      @apply flex items-center justify-center px-[10px] py-[4px] rounded  mx-[5px] text-gray-700 font-semibold hover:text-white hover:bg-blue-400;
+      @apply flex items-center justify-center px-[10px] py-[4px] mx-[5px] text-gray-700 rounded font-semibold
+      hover:text-white hover:bg-blue-400;
 
       &.active {
         @apply bg-blue-500 text-gray-50

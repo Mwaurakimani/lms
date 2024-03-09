@@ -13,7 +13,7 @@ const server = useServer()
 
 if(boundAccount === 'student'){
   server.get('/api/courses/enrolled')
-      .then((resp) => {
+      .then(async (resp) => {
         courses.value = resp.data
       }).catch((err) => {
     console.log(err)
@@ -39,18 +39,17 @@ if(boundAccount === 'student'){
     </div>
     <div class="max-w-[900px] mx-auto h-[300px]">
       <ul class="flex p-0 border-b mb-[20px]">
-        <li class="active">Current Courses</li>
-        <li>Completed Courses</li>
+        <li class="active">Courses</li>
       </ul>
       <section>
         <ul>
           <li class="course-bar" v-for="course in courses">
             <div class="flex gap-[100px] p-[8px]">
-              <div>
+              <div class="w-full" >
                 <h2 class="mb-[10px]">{{course.title}}</h2>
                 <p class="font-normal text-sm line-clamp-3">{{course.description}}</p>
               </div>
-              <div class="w-[400px] flex space-x-2 h-[100px] items-center">
+              <div class="w-fit flex space-x-2 h-[100px] items-center">
                 <router-link v-if="boundAccount=='tutor'" :to="{name:'TutorEditCourse',params:{id:course.id}}">Edit
                 </router-link>
                 <router-link v-if="boundAccount=='student'" :to="{name:'StartCourse',params:{id:course.id}}">Continue
