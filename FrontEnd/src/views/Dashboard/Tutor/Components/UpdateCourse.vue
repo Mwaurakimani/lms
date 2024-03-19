@@ -1,7 +1,9 @@
 <script setup>
-import {onMounted} from "vue";
+import {inject, onMounted} from "vue";
 
 const props = defineProps(['course'])
+const imageUpload = inject('imageUpload')
+
 
 function displayImage(file,field,callBack){
   imageUpload(callBack[0],callBack[1],callBack[2])
@@ -22,13 +24,10 @@ function setImage(event,element_id,field) {
 }
 
 function loadImages(type,field,element){
-
-  if (typeof type === "string"){
-
+  if (type === "string"){
     let url = "http://localhost:8001/storage"+props.course[field]
     const preview = document.getElementById(element);
     preview.setAttribute('src', url);
-
   }else {
     const fileReader = new FileReader();
     const preview = document.getElementById(element);
@@ -40,42 +39,18 @@ function loadImages(type,field,element){
 }
 
 onMounted(() => {
-  console.clear()
   loadImages(
       typeof props.course.image,
       'image',
       'image-preview'
   )
 
-  if (props.course.image) {
-    if(typeof props.course.image == 'string'){
-      let url = "http://localhost:8001/storage"+props.course.image
-      const preview = document.getElementById('image-preview');
-      preview.setAttribute('src', url);
-    }else {
-      const fileReader = new FileReader();
-      const preview = document.getElementById('image-preview');
-      fileReader.onload = event => {
-        preview.setAttribute('src', event.currentTarget.result);
-      }
-      fileReader.readAsDataURL(props.course.image);
-    }
-  }
+  loadImages(
+      typeof props.course.banner,
+      'banner',
+      'banner-preview'
+  )
 
-  if (props.course.banner) {
-    if(typeof props.course.banner == 'string'){
-      let url = "http://localhost:8001/storage"+props.course.banner
-      const preview = document.getElementById('banner-preview');
-      preview.setAttribute('src', url);
-    }else {
-      const fileReader = new FileReader();
-      const preview = document.getElementById('banner-preview');
-      fileReader.onload = event => {
-        preview.setAttribute('src', event.currentTarget.result);
-      }
-      fileReader.readAsDataURL(props.course.banner);
-    }
-  }
 })
 </script>
 

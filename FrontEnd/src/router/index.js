@@ -14,7 +14,11 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: home
+            component: home,
+            beforeEnter: (to, from) => {
+                const authStore = useAuthenticationStore()
+                let authenticated = authStore.is_authenticated
+            }
         },
         {
             path: '/course/:id',
@@ -39,7 +43,6 @@ const router = createRouter({
 
 // authenticated guard
 router.beforeEach(async (to, from, next) => {
-
     const authStore = useAuthenticationStore()
     let authenticated = authStore.is_authenticated
 

@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import {useServer} from "@/composables/server.js";
+import {useRouter} from "vue-router";
 export const useCourseStore = defineStore('useCourseStore', {
     state: () => ({
         courses: {
@@ -28,14 +29,15 @@ export const useCourseStore = defineStore('useCourseStore', {
                 }
             }
 
+            console.log("hi")
+
             server.post('/api/createCourse', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
                 .then((res) => {
-                    console.log(res.data)
-                    // router.push({name:'TutorCourses'})
+                    console.log(res)
                 })
                 .catch((err) => {
                     console.log(err.data)

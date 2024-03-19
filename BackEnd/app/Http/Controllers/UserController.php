@@ -26,10 +26,16 @@ class UserController extends Controller
 
         DB::commit();
 
+        Auth::login($user);
+        $token = $user->createToken('AuthToken')->plainTextToken;
+
         return [
             'success' => true,
             'message' => 'User created successfully',
-            'data' => $user
+            'data' => [
+                'user' => $user,
+                'token' => $token
+            ]
         ];
     }
 

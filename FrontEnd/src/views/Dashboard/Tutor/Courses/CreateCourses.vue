@@ -3,12 +3,14 @@
 import TutorDashboard from "@/components/TutorDashboard.vue";
 import {provide, toRef} from "vue";
 import {useCourseStore} from "@/stores/courseStore.js";
+import {useRouter} from "vue-router";
+import router from "@/router/index.js";
 
 const coursesStore = useCourseStore()
-const course = toRef(coursesStore.courses,'active')
+const course = toRef(coursesStore.courses, 'active')
 coursesStore.loadActiveCourse({
-  title: null,
-  description: null,
+  title: "System Administration",
+  description: "This is a course on System Administration",
   image: null,
   banner: null,
   modules: [],
@@ -21,8 +23,13 @@ document.addEventListener('keydown', function (event) {
     saveCourse()
 })
 
-function saveCourse() {
-  coursesStore.saveActiveCurse()
+async function saveCourse() {
+  try {
+    await coursesStore.saveActiveCurse()
+    await router.push({name: 'TutorCourses'})
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 let imageUpload = (file, variable, fieldName) => {

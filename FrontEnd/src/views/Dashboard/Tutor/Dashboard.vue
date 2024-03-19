@@ -5,6 +5,5 @@ import TutorDashboard from "@/components/TutorDashboard.vue";
 
 <template>
   <TutorDashboard :page-title="'Dashboard'">
-    <p>Dashboard</p>
   </TutorDashboard>
 </template>

@@ -2,18 +2,23 @@
 import TutorDashboard from "@/components/TutorDashboard.vue";
 import {useServer} from "@/composables/server.js";
 import {useRoute} from "vue-router";
-import {ref} from "vue";
+import {provide, ref, toRef} from "vue";
+import {useCourseStore} from "@/stores/courseStore.js";
 
+const courseStore = useCourseStore()
 const server = useServer()
 const route = useRoute()
-const course = ref(null)
+const course = toRef(courseStore.loadActiveCourse(null))
 
 server.get('api/course/'+route.params.id)
-    .then(async (resp) => {
-      course.value = resp.data
-    }).catch((err) => {
-  console.log(err)
-})
+    .then(async (resp) => course.value = resp.data)
+    .catch((err) =>   console.log(err))
+
+let imageUpload = (file, variable, fieldName) => {
+  course.value[fieldName] = file
+}
+
+provide('imageUpload', imageUpload)
 
 </script>
 

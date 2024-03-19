@@ -4,6 +4,7 @@ import {ref} from "vue";
 import {useServer} from "@/composables/server.js";
 import {useRoute, useRouter} from "vue-router";
 import dateFormatter from "../../composables/dateFormatter.js";
+import {useAuthenticationStore} from "@/stores/authenticationStore.js";
 
 const accountType = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).accountType : null
 
@@ -11,6 +12,8 @@ const router = useRouter()
 const course = ref([])
 const server = useServer()
 const route = useRoute()
+const auth = useAuthenticationStore()
+const user = auth.user
 
 server.get('/api/course/' + route.params.id)
     .then((resp) => {
@@ -19,13 +22,21 @@ server.get('/api/course/' + route.params.id)
   console.log(err)
 })
 
-function enroll() {
-  server.get('/api/enroll/' + route.params.id)
-      .then((resp) => {
-        router.push({name:'StudentCourses'})
-      }).catch((err) => {
+async function enroll() {
+  try {
+
+    let course_id = route.params.id
+    let user_id = user.id
+
+    let resp = await server.post("/api/course/enrole/" + user_id + "/" + course_id)
+    // let enrolment_id = resp.data[0].id
+    router.push({name:"StudentDashboard"})
+  } catch (err) {
     console.log(err)
-  })
+  }
+
+  // router.push({name:'StudentCourses'})
+
 }
 
 </script>
@@ -50,8 +61,8 @@ function enroll() {
       <h1 class="mb-[10px] py-[10px] font-semibold text-gray-700">Course Oultline</h1>
       <ul class="text-sm">
         <li class="flex justify-between mb-[10px]" v-for="item in course.modules">
-          <h3>{{item.title}}</h3>
-          <p class="w-[100px]">{{item.time}}</p>
+          <h3>{{ item.title }}</h3>
+          <p class="w-[100px]">{{ item.time }}</p>
         </li>
       </ul>
     </div>

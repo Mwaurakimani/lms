@@ -1,36 +1,40 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useServer } from '@/composables/server.js'
-import { reactive } from 'vue'
+import {reactive, ref} from 'vue'
 import {useSetupStore} from "@/stores/setupStore.js";
+import {useAuthenticationStore} from "@/stores/authenticationStore.js";
 
+const auth = useAuthenticationStore();
 const router = useRouter()
-const setup = useSetupStore()
 const server = useServer()
+const errorsValues = ref([])
 const content = reactive({
-  username: '',
-  email: '',
-  accountType: '',
-  password: '',
-  confirm_password: ''
+  username: 'tutor',
+  email: 'tutor@email.com',
+  accountType: 'tutor',
+  password: 'password',
+  confirm_password: 'password'
 })
 
 
-function register() {
+async function register() {
+  try {
+    let reponce = await server.post('/api/register', { ...content });
+    let user = reponce.data.data.user
+    let token = reponce.data.data.token
 
-  setup.$patch({
-    port:'100'
-  })
+    auth.$patch({token:token, user:user})
 
-  server
-    .post('/api/register', {... content })
-    .then((res) => {
-      alert(res.data.message)
-      router.push({name:'home'})
-    })
-    .catch((err) => {
-    })
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    await router.push({name: 'home'})
+  } catch (err) {
+    errorsValues.value = err.response.data.errors;
+  }
 }
+
 </script>
 
 <template>

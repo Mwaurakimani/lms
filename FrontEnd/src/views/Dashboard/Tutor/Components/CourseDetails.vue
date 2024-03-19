@@ -4,10 +4,12 @@ import {inject, onMounted} from "vue";
 const props = defineProps(['course'])
 const imageUpload = inject('imageUpload')
 
-function displayImage(file,field,callBack){
-  imageUpload(callBack[0],callBack[1],callBack[2])
-  const preview = document.getElementById(field);
+
+//for displaying
+function displayImage(file, field, callBack) {
   const fileReader = new FileReader();
+  imageUpload(callBack[0], callBack[1], callBack[2])
+  const preview = document.getElementById(field);
   fileReader.onload = event => {
     preview.setAttribute('src', event.currentTarget.result);
   }
@@ -16,30 +18,20 @@ function displayImage(file,field,callBack){
 }
 
 
-function setImage(event,element_id,field) {
+//for upload
+function setImage(event, element_id, field) {
   let file = event.currentTarget.files[0]
   if (file)
-    displayImage(file,element_id,[file,props.course,field])
+    displayImage(file, element_id, [file, props.course, field])
 }
 
 onMounted(() => {
-  if (props.course.image) {
-    const fileReader = new FileReader();
-    const preview = document.getElementById('image-preview');
-    fileReader.onload = event => {
-      preview.setAttribute('src', event.currentTarget.result);
-    }
-    fileReader.readAsDataURL(props.course.image);
-  }
+  if (props.course.image)
+    displayImage(props.course.image, 'image-preview', 'image')
 
-  if (props.course.banner) {
-    const fileReader = new FileReader();
-    const preview = document.getElementById('banner-preview');
-    fileReader.onload = event => {
-      preview.setAttribute('src', event.currentTarget.result);
-    }
-    fileReader.readAsDataURL(props.course.banner);
-  }
+  if (props.course.banner)
+    displayImage(props.course.banner, 'banner-preview', 'banner')
+
 })
 </script>
 
@@ -61,7 +53,8 @@ onMounted(() => {
       </div>
       <div class="flex mb-3 flex-col">
         <label class="form-label block w-full">Banner</label>
-        <img v-show="course.banner" class="max-w-[250px] max-h-[200px] m-[20px]" src="#" alt="Image" id="banner-preview">
+        <img v-show="course.banner" class="max-w-[250px] max-h-[200px] m-[20px]" src="#" alt="Image"
+             id="banner-preview">
         <input type="file" @change="(event) => setImage(event,'banner-preview','banner')" class="block mx-[20px]">
       </div>
     </form>

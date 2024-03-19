@@ -21,12 +21,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $user;
 });
 
-Route::post('/createCourse', [\App\Http\Controllers\CourseController::class,'create'])->middleware(['auth:sanctum']);
 Route::get('/courses', [\App\Http\Controllers\CourseController::class,'viewAll']);
+Route::post('/createCourse', [\App\Http\Controllers\CourseController::class,'create'])->middleware(['auth:sanctum']);
 Route::get('/course/{id}', [\App\Http\Controllers\CourseController::class,'viewCourse']);
 Route::get('/enroll/{id}', [\App\Http\Controllers\CourseController::class,'enroll'])->middleware(['auth:sanctum']);
 Route::get('/courses/enrolled', [\App\Http\Controllers\CourseController::class,'viewEnrolled'])->middleware(['auth:sanctum']);
+Route::post('/course/enrole/{User}/{Course}', [\App\Http\Controllers\CourseController::class,'enroll'])->middleware(['auth:sanctum']);
+Route::get('/module/{Module}', [\App\Http\Controllers\CourseController::class,'getModule'])->middleware(['auth:sanctum']);
 
 
+Route::delete('course/{course}',[\App\Http\Controllers\CourseController::class,'delete'])->middleware(['auth:sanctum']);
+
+
+Route::get('/student/course/{Course}', [\App\Http\Controllers\CourseController::class,'study'])->middleware(['auth:sanctum']);
 
 

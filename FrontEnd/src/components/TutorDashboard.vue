@@ -1,18 +1,24 @@
 <script setup>
 import SideBarHeading from "@/components/SideBarHeading.vue";
+import {useAuthenticationStore} from "@/stores/authenticationStore.js";
+import {toRef} from "vue";
 
 const props = defineProps(['pageTitle'])
+
+const auth = useAuthenticationStore()
+let username =toRef(auth.user.username)
 </script>
 
 <template>
   <div class="dashboard-app-holder flex gap-1">
-    <div class="side-panel">
+    <div class="side-panel flex flex-column justify-content-between">
       <side-bar-heading :page-title="props.pageTitle"/>
-      <ul class="text-white side-buttons-list">
+      <ul class="text-white side-buttons-list h-full">
         <router-link :to="{name:'TutorDashboard'}">Dashboard</router-link>
         <router-link :to="{name:'TutorCourses'}">My Courses</router-link>
         <router-link :to="{name:'TutorCourses'}">Account</router-link>
       </ul>
+      <p class="text-white px-[20px] mb-[20px] font-bold text-[20px] text-right"> Welcome {{username}}</p>
     </div>
     <div class="main-content">
       <slot></slot>

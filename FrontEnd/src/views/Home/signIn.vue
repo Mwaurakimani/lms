@@ -7,8 +7,6 @@ import {useAuthenticationStore} from "@/stores/authenticationStore.js";
 const router = useRouter()
 const server = useServer()
 const auth = useAuthenticationStore()
-
-
 const errorsValues = ref({})
 const content = reactive({
   email:'',
@@ -27,7 +25,7 @@ async function login() {
 
     await router.push({name: 'home'})
   }catch (errors){
-    errorsValues.value = errors?.response?.data?.errors
+    errorsValues.value = errors.response.data.errors ?? {email:[errors.response.data.message]};
   }
 }
 function register() {
@@ -43,7 +41,7 @@ function register() {
       <form>
         <div class="px-[60px]">
           <div class="input-group">
-            <label>username</label>
+            <label>Email</label>
             <input type="email" placeholder="email" v-model="content.email"/>
             <p v-if="errorsValues.email" class="text-red-400 text-right text-sm">{{errorsValues?.email[0]}}</p>
           </div>

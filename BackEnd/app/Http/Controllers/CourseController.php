@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Enrolment;
 use App\Models\Modules;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,7 @@ class CourseController extends Controller
 
             if ($request->file('banner')) {
                 $path = $this->uploadCourseImage(
-                    $request->file('image'),
+                    $request->file('banner'),
                     '/courses/banner/' . $course_saved->id
                 );
 
@@ -85,19 +86,18 @@ class CourseController extends Controller
         return $id->load('modules');
     }
 
-    public function enroll(Request $request, Course $id)
+    public function enroll(Request $request, User $User, Course $Course)
     {
-        $course = $id;
-
         DB::beginTransaction();
 
         try {
             $enrollment = Enrolment::create([
-                'student_id' => Auth::user()->id,
-                'course_id' => $course->id
+                'student_id' => $User->id,
+                'course_id' => $Course->id
             ]);
 
-            return ['success'];
+            DB::commit();
+            return [$enrollment];
 
         } catch (\Exception $err) {
             DB::rollBack();
@@ -107,11 +107,39 @@ class CourseController extends Controller
 
     public function viewEnrolled(Request $request)
     {
-        $enrolled = Enrolment::where('student_id', Auth::user()->id)->get()->pluck('course_id');
-        $courses = Course::whereIn('id', $enrolled)->get();
+        $enrolled = Enrolment::where('student_id', Auth::user()->id)
+            ->with(['course'])
+            ->get();
 
-        return $courses;
+        return $enrolled;
     }
+
+    public function study(Request $request, Course $Course){
+        $Course->load('modules');
+        return $Course;
+    }
+
+    public function getModule(Request $request,Modules $Module){
+        $user = Auth::user()->id;
+        $course = $Module->course_id;
+        $enrol = Enrolment::where('student_id',$user)->where('course_id',$course)->first();
+        $enrol->current_module = $Module->id;
+        $enrol->save();
+
+        $modules = Modules::where('course_id',$course)->get();
+        $count = $modules->count();
+
+        $enrol->next_module = ($enrol->current_module/$count)*100;
+        $enrol->save();
+
+        if($enrol->next_module == 100){
+            $enrol->status = "Completed";
+            $enrol->save();
+        }
+
+        return [$Module];
+    }
+
 
     /**
      * @throws \Exception
@@ -134,6 +162,11 @@ class CourseController extends Controller
         } catch (\Exception $e) {
             throw new \Exception('Error uploading image: ' . $e->getMessage());
         }
+    }
+
+    public function delete(Request $request, Course $course)
+    {
+        return response()->json($course->delete());
     }
 
 }

@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import {useServer} from "@/composables/server.js";
+import router from "@/router/index.js";
 
 export const useAuthenticationStore = defineStore('useAuthenticationStore', {
     state: () => ({
@@ -43,6 +44,7 @@ export const useAuthenticationStore = defineStore('useAuthenticationStore', {
                 await server.get('/api/user');
             } catch (error) {
                 console.error('Invalid token:', error.response.data);
+                router.push({})
                 localStorage.clear();
             }
         }
