@@ -1,0 +1,11 @@
+@mixin app-card{
+  @apply bg-gray-200 px-[3px] py-[3px] text-sm rounded mx-[5px];
+}
+
+*{
+  transition: all ease-in 50ms;
+}
+
+body{
+  background-color: @apply accent-gray-600;
+}
